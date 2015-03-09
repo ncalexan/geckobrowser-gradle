@@ -3,37 +3,41 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.12.+'
+        classpath 'com.android.tools.build:gradle:1.0.0'
     }
 }
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion '19.1.0'
+    compileSdkVersion 21
+    buildToolsVersion '21.1.1'
     defaultConfig {
         applicationId 'org.mozilla.geckobrowser'
-        minSdkVersion 8
-        targetSdkVersion 19
+        minSdkVersion 9
+        targetSdkVersion 21
         versionCode 1
         versionName '1.0'
     }
 
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false // Can't Proguard!
             proguardFile getDefaultProguardFile('proguard-android.txt')
         }
     }
 }
 
 repositories {
-    maven {
-        url 'https://ci.mozilla.org/job/mozilla-central-geckoview/mozilla-central_Maven_Repository'
+    ivy {
+        url '/Users/nalexander/Mozilla/gecko/t'
+        layout 'pattern' , {
+            artifact "[artifact]-[revision](.[ext])"
+            ivy "ivy-[module]-[revision].xml"
+        }
     }
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:19.+'
-    compile 'org.mozilla.geckoview:library:+'
+    compile 'com.android.support:support-v4:21.+'
+    compile 'org.mozilla:geckoview:+'
 }
