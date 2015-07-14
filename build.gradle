@@ -9,19 +9,20 @@ buildscript {
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion '21.1.1'
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
+
     defaultConfig {
         applicationId 'org.mozilla.geckobrowser'
         minSdkVersion 9
-        targetSdkVersion 21
-        versionCode 1
-        versionName '1.0'
+        targetSdkVersion 22
     }
 
     buildTypes {
         release {
-            minifyEnabled false // Can't Proguard!
+            // Can't Proguard (temporarily): GeckoView has JNI methods that must be
+            // protected, but geckoview.aar does not yet include proguard.txt.
+            minifyEnabled false
             proguardFile getDefaultProguardFile('proguard-android.txt')
         }
     }
@@ -29,8 +30,8 @@ android {
 
 repositories {
     ivy {
-        url '/Users/nalexander/Mozilla/gecko/t'
-        layout 'pattern' , {
+        url 'http://ftp.mozilla.org/pub/mozilla.org/mobile/nightly/2015-07-14-03-02-06-mozilla-central-android-api-11/'
+        layout 'pattern', {
             artifact "[artifact]-[revision](.[ext])"
             ivy "ivy-[module]-[revision].xml"
         }
@@ -38,6 +39,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:21.+'
-    compile 'org.mozilla:geckoview:+'
+    compile 'org.mozilla:geckoview:20150714030206' // Matches version extracted manually from ivy.url above.
+    // Needed (temporarily) because geckoview.aar does not declare its dependencies correctly.
+    compile 'com.android.support:support-v4:22.2.0'
 }
