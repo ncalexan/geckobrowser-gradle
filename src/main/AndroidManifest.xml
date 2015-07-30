@@ -1,15 +1,223 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="org.mozilla.geckobrowser"
-      android:versionCode="1"
-      android:versionName="1.0">
-    <application android:label="@string/app_name" android:icon="@drawable/ic_launcher">
-        <activity android:name="MainActivity"
-                  android:label="@string/app_name">
+      package="org.mozilla.b2gdroid"
+      android:installLocation="auto"
+      >
+    <uses-sdk android:minSdkVersion="9"
+              android:targetSdkVersion="22"/>
+
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
+    <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT"/>
+    <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS"/>
+
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="org.mozilla.b2gdroid.permissions.PASSWORD_PROVIDER"/>
+    <uses-permission android:name="org.mozilla.b2gdroid.permissions.BROWSER_PROVIDER"/>
+    <uses-permission android:name="org.mozilla.b2gdroid.permissions.FORMHISTORY_PROVIDER"/>
+
+    <uses-feature android:name="android.hardware.location" android:required="false"/>
+    <uses-feature android:name="android.hardware.location.gps" android:required="false"/>
+    <uses-feature android:name="android.hardware.touchscreen"/>
+
+    <!-- Contacts API -->
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+
+    <!-- Tab Queue -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+
+    <!-- Android Beam support -->
+    <uses-permission android:name="android.permission.NFC"/>
+    <uses-feature android:name="android.hardware.nfc" android:required="false"/>
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-feature android:name="android.hardware.audio.low_latency" android:required="false"/>
+    <uses-feature android:name="android.hardware.camera.any" android:required="false"/>
+    <uses-feature android:name="android.hardware.microphone" android:required="false"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>
+
+    <!-- App requires OpenGL ES 2.0 -->
+    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+
+    <!-- Needed to disable the default lockscreen -->
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+
+    <application android:label="@string/moz_app_displayname"
+                 android:icon="@drawable/icon"
+                 android:logo="@drawable/logo"
+                 android:name="org.mozilla.gecko.GeckoApplication"
+                 android:hardwareAccelerated="true"
+                 android:debuggable="true">
+
+        <meta-data android:name="com.sec.android.support.multiwindow" android:value="true"/>
+
+        <activity android:name="org.mozilla.b2gdroid.Launcher"
+                  android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+                  android:icon="@drawable/b2g"
+                  android:label="@string/b2g">
+
+            <!-- Set up as a homescreen replacement -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <!-- Default browser intents -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:scheme="about" />
+                <data android:scheme="javascript" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="file" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:mimeType="text/html"/>
+                <data android:mimeType="text/plain"/>
+                <data android:mimeType="application/xhtml+xml"/>
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.WEB_SEARCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+            </intent-filter>
+
+            <!-- We will route the search intent to Gaia -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
         </activity>
+
+        <receiver android:name="org.mozilla.gecko.GeckoUpdateReceiver">
+            <intent-filter>
+                <action android:name="org.mozilla.b2gdroid.CHECK_UPDATE_RESULT" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="org.mozilla.gecko.GeckoMessageReceiver"
+                  android:permission="org.mozilla.b2gdroid.permissions.PASSWORD_PROVIDER">
+            <intent-filter>
+                  <action android:name="org.mozilla.gecko.INIT_PW"></action>
+            </intent-filter>
+        </receiver>
+
+        <!-- Catch install referrer so we can do post-install work. -->
+        <receiver android:name="org.mozilla.gecko.distribution.ReferrerReceiver"
+                  android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name="org.mozilla.gecko.Restarter"
+                  android:exported="false"
+                  android:process="org.mozilla.b2gdroid.Restarter">
+        </service>
+
+        <provider android:name="org.mozilla.gecko.db.BrowserProvider"
+                  android:authorities="org.mozilla.b2gdroid.db.browser"
+                  android:permission="org.mozilla.b2gdroid.permissions.BROWSER_PROVIDER"/>
+
+        <!-- Service to handle requests from overlays. -->
+        <service android:name="org.mozilla.gecko.overlays.service.OverlayActionService" />
+        <!--
+          Ensure that passwords provider runs in its own process. (Bug 718760.)
+          Process name is per-application to avoid loading CPs from multiple
+          Fennec versions into the same process. (Bug 749727.)
+          Process name is a mangled version to avoid a Talos bug. (Bug 750548.)
+          -->
+        <provider android:name="org.mozilla.gecko.db.PasswordsProvider"
+                  android:label="@string/sync_configure_engines_title_passwords"
+                  android:authorities="org.mozilla.b2gdroid.db.passwords"
+                  android:permission="org.mozilla.b2gdroid.permissions.PASSWORD_PROVIDER"
+                  android:process="org.mozilla.b2gdroid.PasswordsProvider"/>
+
+        <provider android:name="org.mozilla.gecko.db.FormHistoryProvider"
+                  android:label="@string/sync_configure_engines_title_history"
+                  android:authorities="org.mozilla.b2gdroid.db.formhistory"
+                  android:permission="org.mozilla.b2gdroid.permissions.FORMHISTORY_PROVIDER"
+                  android:protectionLevel="signature"/>
+
+        <provider android:name="org.mozilla.gecko.GeckoProfilesProvider"
+                  android:authorities="org.mozilla.b2gdroid.profiles"/>
+
+        <provider android:name="org.mozilla.gecko.db.TabsProvider"
+                  android:label="@string/sync_configure_engines_title_tabs"
+                  android:authorities="org.mozilla.b2gdroid.db.tabs"
+                  android:permission="org.mozilla.b2gdroid.permissions.BROWSER_PROVIDER"/>
+
+        <provider android:name="org.mozilla.gecko.db.HomeProvider"
+                  android:authorities="org.mozilla.b2gdroid.db.home"
+                  android:permission="org.mozilla.b2gdroid.permissions.BROWSER_PROVIDER"/>
+
+        <provider android:name="org.mozilla.gecko.db.ReadingListProvider"
+                  android:authorities="org.mozilla.b2gdroid.db.readinglist"
+                  android:exported="false"
+                  android:label="@string/reading_list_title"
+                  android:permission="org.mozilla.b2gdroid.permissions.BROWSER_PROVIDER"/>
+
+        <provider android:name="org.mozilla.gecko.db.SearchHistoryProvider"
+                  android:authorities="org.mozilla.b2gdroid.db.searchhistory"
+                  android:permission="org.mozilla.b2gdroid.permissions.BROWSER_PROVIDER"/>
+
+        <service
+            android:exported="false"
+            android:name="org.mozilla.gecko.updater.UpdateService"
+            android:process="org.mozilla.b2gdroid.UpdateService">
+        </service>
+
+        <service
+            android:exported="false"
+            android:name="org.mozilla.gecko.NotificationService">
+        </service>
+
+<service
+    android:name="org.mozilla.mozstumbler.service.stumblerthread.StumblerService"
+    android:label="stumbler">
+</service>
+
+<receiver android:name="org.mozilla.mozstumbler.service.uploadthread.UploadAlarmReceiver" />
+<service android:name="org.mozilla.mozstumbler.service.uploadthread.UploadAlarmReceiver$UploadAlarmService" />
+
+<receiver android:name="org.mozilla.mozstumbler.service.mainthread.PassiveServiceReceiver">
+  <intent-filter>
+      <action android:name="android.intent.action.BOOT_COMPLETED" />
+      <action android:name="android.intent.action.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE" />
+      <action android:name="org.mozilla.b2gdroid.STUMBLER_PREF" />
+  </intent-filter>
+</receiver>
+
     </application>
+
+    <permission android:name="org.mozilla.b2gdroid.permissions.BROWSER_PROVIDER"
+                android:protectionLevel="signature"/>
+
+    <permission android:name="org.mozilla.b2gdroid.permissions.PASSWORD_PROVIDER"
+                android:protectionLevel="signature"/>
+
+    <permission android:name="org.mozilla.b2gdroid.permissions.FORMHISTORY_PROVIDER"
+                android:protectionLevel="signature"/>
+
 </manifest>

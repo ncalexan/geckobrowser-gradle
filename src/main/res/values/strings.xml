@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">GeckoBrowser</string>
-    <string name="action_exit">Exit</string>
-    <string name="go_button_text">Go</string>
-    <string name="default_url">resource://android/assets/test.html</string>
-    
+  <string name="b2g">Firefox OS</string>
+
 </resources>

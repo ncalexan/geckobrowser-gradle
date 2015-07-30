@@ -13,7 +13,7 @@ android {
     buildToolsVersion "22.0.1"
 
     defaultConfig {
-        applicationId 'org.mozilla.geckobrowser'
+        applicationId 'org.mozilla.b2gdroid'
         minSdkVersion 9
         targetSdkVersion 22
     }
@@ -30,7 +30,7 @@ android {
 
 repositories {
     ivy {
-        url 'http://ftp.mozilla.org/pub/mozilla.org/mobile/nightly/2015-07-14-03-02-06-mozilla-central-android-api-11/'
+        url 'file:///Users/nalexander/Mozilla/gecko/objdir-b2gdroid/dist'
         layout 'pattern', {
             artifact "[artifact]-[revision](.[ext])"
             ivy "ivy-[module]-[revision].xml"
@@ -39,7 +39,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.mozilla:geckoview:20150714030206' // Matches version extracted manually from ivy.url above.
+    compile 'org.mozilla:geckoview:+' // Matches version extracted manually from ivy.url above.
     // Needed (temporarily) because geckoview.aar does not declare its dependencies correctly.
     compile 'com.android.support:support-v4:22.2.0'
 }
