@@ -52,7 +52,6 @@
     <application android:label="@string/moz_app_displayname"
                  android:icon="@drawable/icon"
                  android:logo="@drawable/logo"
-                 android:name="org.mozilla.gecko.GeckoApplication"
                  android:hardwareAccelerated="true"
                  android:debuggable="true">
 
@@ -106,36 +105,6 @@
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
         </activity>
-
-        <receiver android:name="org.mozilla.gecko.GeckoUpdateReceiver">
-            <intent-filter>
-                <action android:name="org.mozilla.b2gdroid.CHECK_UPDATE_RESULT" />
-            </intent-filter>
-        </receiver>
-
-        <!-- Catch install referrer so we can do post-install work. -->
-        <receiver android:name="org.mozilla.gecko.distribution.ReferrerReceiver"
-                  android:exported="true">
-            <intent-filter>
-                <action android:name="com.android.vending.INSTALL_REFERRER" />
-            </intent-filter>
-        </receiver>
-
-        <service android:name="org.mozilla.gecko.Restarter"
-                  android:exported="false"
-                  android:process="org.mozilla.b2gdroid.Restarter">
-        </service>
-
-        <service
-            android:exported="false"
-            android:name="org.mozilla.gecko.updater.UpdateService"
-            android:process="org.mozilla.b2gdroid.UpdateService">
-        </service>
-
-        <service
-            android:exported="false"
-            android:name="org.mozilla.gecko.NotificationService">
-        </service>
 
     </application>
 
