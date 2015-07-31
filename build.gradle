@@ -30,7 +30,7 @@ android {
 
 repositories {
     ivy {
-        url 'file:///Users/nalexander/Mozilla/gecko/objdir-b2gdroid/dist'
+        url 'https://ftp.mozilla.org/pub/mozilla.org/firefox/try-builds/nalexander@mozilla.com-6b892ecb65f3/try-android-api-11/'
         layout 'pattern', {
             artifact "[artifact]-[revision](.[ext])"
             ivy "ivy-[module]-[revision].xml"
