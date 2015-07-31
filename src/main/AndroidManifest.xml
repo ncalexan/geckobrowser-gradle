@@ -18,9 +18,6 @@
 
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
-    <uses-permission android:name="org.mozilla.b2gdroid.permissions.PASSWORD_PROVIDER"/>
-    <uses-permission android:name="org.mozilla.b2gdroid.permissions.BROWSER_PROVIDER"/>
-    <uses-permission android:name="org.mozilla.b2gdroid.permissions.FORMHISTORY_PROVIDER"/>
 
     <uses-feature android:name="android.hardware.location" android:required="false"/>
     <uses-feature android:name="android.hardware.location.gps" android:required="false"/>
@@ -116,13 +113,6 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="org.mozilla.gecko.GeckoMessageReceiver"
-                  android:permission="org.mozilla.b2gdroid.permissions.PASSWORD_PROVIDER">
-            <intent-filter>
-                  <action android:name="org.mozilla.gecko.INIT_PW"></action>
-            </intent-filter>
-        </receiver>
-
         <!-- Catch install referrer so we can do post-install work. -->
         <receiver android:name="org.mozilla.gecko.distribution.ReferrerReceiver"
                   android:exported="true">
@@ -136,52 +126,6 @@
                   android:process="org.mozilla.b2gdroid.Restarter">
         </service>
 
-        <provider android:name="org.mozilla.gecko.db.BrowserProvider"
-                  android:authorities="org.mozilla.b2gdroid.db.browser"
-                  android:permission="org.mozilla.b2gdroid.permissions.BROWSER_PROVIDER"/>
-
-        <!-- Service to handle requests from overlays. -->
-        <service android:name="org.mozilla.gecko.overlays.service.OverlayActionService" />
-        <!--
-          Ensure that passwords provider runs in its own process. (Bug 718760.)
-          Process name is per-application to avoid loading CPs from multiple
-          Fennec versions into the same process. (Bug 749727.)
-          Process name is a mangled version to avoid a Talos bug. (Bug 750548.)
-          -->
-        <provider android:name="org.mozilla.gecko.db.PasswordsProvider"
-                  android:label="@string/sync_configure_engines_title_passwords"
-                  android:authorities="org.mozilla.b2gdroid.db.passwords"
-                  android:permission="org.mozilla.b2gdroid.permissions.PASSWORD_PROVIDER"
-                  android:process="org.mozilla.b2gdroid.PasswordsProvider"/>
-
-        <provider android:name="org.mozilla.gecko.db.FormHistoryProvider"
-                  android:label="@string/sync_configure_engines_title_history"
-                  android:authorities="org.mozilla.b2gdroid.db.formhistory"
-                  android:permission="org.mozilla.b2gdroid.permissions.FORMHISTORY_PROVIDER"
-                  android:protectionLevel="signature"/>
-
-        <provider android:name="org.mozilla.gecko.GeckoProfilesProvider"
-                  android:authorities="org.mozilla.b2gdroid.profiles"/>
-
-        <provider android:name="org.mozilla.gecko.db.TabsProvider"
-                  android:label="@string/sync_configure_engines_title_tabs"
-                  android:authorities="org.mozilla.b2gdroid.db.tabs"
-                  android:permission="org.mozilla.b2gdroid.permissions.BROWSER_PROVIDER"/>
-
-        <provider android:name="org.mozilla.gecko.db.HomeProvider"
-                  android:authorities="org.mozilla.b2gdroid.db.home"
-                  android:permission="org.mozilla.b2gdroid.permissions.BROWSER_PROVIDER"/>
-
-        <provider android:name="org.mozilla.gecko.db.ReadingListProvider"
-                  android:authorities="org.mozilla.b2gdroid.db.readinglist"
-                  android:exported="false"
-                  android:label="@string/reading_list_title"
-                  android:permission="org.mozilla.b2gdroid.permissions.BROWSER_PROVIDER"/>
-
-        <provider android:name="org.mozilla.gecko.db.SearchHistoryProvider"
-                  android:authorities="org.mozilla.b2gdroid.db.searchhistory"
-                  android:permission="org.mozilla.b2gdroid.permissions.BROWSER_PROVIDER"/>
-
         <service
             android:exported="false"
             android:name="org.mozilla.gecko.updater.UpdateService"
@@ -193,31 +137,6 @@
             android:name="org.mozilla.gecko.NotificationService">
         </service>
 
-<service
-    android:name="org.mozilla.mozstumbler.service.stumblerthread.StumblerService"
-    android:label="stumbler">
-</service>
-
-<receiver android:name="org.mozilla.mozstumbler.service.uploadthread.UploadAlarmReceiver" />
-<service android:name="org.mozilla.mozstumbler.service.uploadthread.UploadAlarmReceiver$UploadAlarmService" />
-
-<receiver android:name="org.mozilla.mozstumbler.service.mainthread.PassiveServiceReceiver">
-  <intent-filter>
-      <action android:name="android.intent.action.BOOT_COMPLETED" />
-      <action android:name="android.intent.action.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE" />
-      <action android:name="org.mozilla.b2gdroid.STUMBLER_PREF" />
-  </intent-filter>
-</receiver>
-
     </application>
-
-    <permission android:name="org.mozilla.b2gdroid.permissions.BROWSER_PROVIDER"
-                android:protectionLevel="signature"/>
-
-    <permission android:name="org.mozilla.b2gdroid.permissions.PASSWORD_PROVIDER"
-                android:protectionLevel="signature"/>
-
-    <permission android:name="org.mozilla.b2gdroid.permissions.FORMHISTORY_PROVIDER"
-                android:protectionLevel="signature"/>
 
 </manifest>
